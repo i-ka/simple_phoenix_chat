@@ -8,6 +8,7 @@ defmodule Tandyr.Messaging.Conversation do
     field :name, :string
     field :description, :string
 
+    has_many :messages, Tandyr.Messaging.Message
     many_to_many :participants, Tandyr.UserManager.User, join_through: "conversations_users"
 
     timestamps()

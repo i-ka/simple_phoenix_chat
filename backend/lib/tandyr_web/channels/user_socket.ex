@@ -3,6 +3,7 @@ defmodule TandyrWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
+  channel "direct:*", TandyrWeb.DirectChannel
   channel "room:*", TandyrWeb.RoomChannel
 
   # Socket params are passed from the client and can

@@ -1,20 +1,25 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Chat, SocketContext, UserContext } from './Socket'
+import { TandyrChatConnector, DirectChannelContext, SocketContext, UserContext, Chat } from './Socket'
 import { Channel, Socket } from 'phoenix';
 import './App.css';
 import { User } from './USer';
+import { ChatUI } from './ChatUi';
 
 const TestButton = () => {
-  const socket = useContext(SocketContext);
+  const directChannel = useContext(DirectChannelContext);
   const user = useContext(UserContext);
   
   const createConversation = (inviteUserIds: number[]) => {
-    
+    directChannel
+      ?.push("new_conversation", {name: "test123", users_to_invite: inviteUserIds})
+      .receive('ok', c => console.log(c))
+      .receive('error', e => console.error(e))
   }
 
   return (
     <div>
-      <span>You are logged in as user {user?.username}</span>
+      <span>You are logged in as user {user?.username} your id is {user?.id}</span>
+      <button onClick={() => createConversation([2])}>Create channel</button>
     </div>
   )
 }
@@ -44,10 +49,11 @@ function App() {
     <div>
       {token && user
         ?
-        <Chat endpoint='ws://localhost:4000/socket' user={user} token={token}>
-          <span>You are in chat!</span>
-          <TestButton></TestButton>
-        </Chat>
+        <TandyrChatConnector endpoint='ws://localhost:4000/socket' user={user} token={token}>
+          <Chat>
+            <ChatUI></ChatUI>
+          </Chat>
+        </TandyrChatConnector>
         : <>
           <input value={login} onChange={(e) => setLogin(e.target.value)} />
           <input value={pass} onChange={(e) => setPass(e.target.value)} />
