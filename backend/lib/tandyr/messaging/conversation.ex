@@ -2,7 +2,7 @@ defmodule Tandyr.Messaging.Conversation do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:id, :name, :description, :participants, :updated_at, :inserted_at]}
+  @derive {Jason.Encoder, only: [:id, :name, :description, :participants, :messages, :updated_at, :inserted_at]}
 
   schema "conversations" do
     field :name, :string

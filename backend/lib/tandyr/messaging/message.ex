@@ -7,6 +7,7 @@ defmodule Tandyr.Messaging.Message do
              :id,
              :content,
              :user_id,
+             :user,
              :conversation_id,
              :updated_at,
              :inserted_at

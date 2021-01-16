@@ -4,25 +4,8 @@ import { Channel, Socket } from 'phoenix';
 import './App.css';
 import { User } from './USer';
 import { ChatUI } from './ChatUi';
-
-const TestButton = () => {
-  const directChannel = useContext(DirectChannelContext);
-  const user = useContext(UserContext);
-  
-  const createConversation = (inviteUserIds: number[]) => {
-    directChannel
-      ?.push("new_conversation", {name: "test123", users_to_invite: inviteUserIds})
-      .receive('ok', c => console.log(c))
-      .receive('error', e => console.error(e))
-  }
-
-  return (
-    <div>
-      <span>You are logged in as user {user?.username} your id is {user?.id}</span>
-      <button onClick={() => createConversation([2])}>Create channel</button>
-    </div>
-  )
-}
+import { AppContext } from './AppContext';
+import { LoginForm } from './LoginForm';
 
 function App() {
   const [login, setLogin] = useState<string>('');
@@ -46,21 +29,22 @@ function App() {
   }, [login, pass])
 
   return (
-    <div>
-      {token && user
-        ?
-        <TandyrChatConnector endpoint='ws://localhost:4000/socket' user={user} token={token}>
-          <Chat>
-            <ChatUI></ChatUI>
-          </Chat>
-        </TandyrChatConnector>
-        : <>
-          <input value={login} onChange={(e) => setLogin(e.target.value)} />
-          <input value={pass} onChange={(e) => setPass(e.target.value)} />
-          <button onClick={() => signIn()}>SignIn</button>
-        </>
-      }
-    </div>
+    <AppContext.Provider value={{baseUrl: "http://localhost:4000/api/user/login"}}>
+      <div>
+        {token && user
+          ?
+          <TandyrChatConnector endpoint='ws://localhost:4000/socket' user={user} token={token}>
+            <Chat>
+              <ChatUI></ChatUI>
+            </Chat>
+          </TandyrChatConnector>
+          : <>
+            <LoginForm onLoggedIn={(user, token) => {setUser(user); setToken(token)}}/>
+          </>
+        }
+      </div>
+    </AppContext.Provider>
+
   );
 }
 

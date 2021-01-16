@@ -28,29 +28,19 @@ defmodule TandyrWeb.UserController do
   end
 
   def get_user_by_id(conn, %{"user_id" => user_id}) do
-    with user when not is_nil(user) <- UserManager.get_user(user_id) do
-      conn |> put_status(200) |> json(user)
-    else
-      nil -> conn |> put_status(404) |> text('')
+    case UserManager.get_user(user_id) do
+      user when not is_nil(user) ->
+        conn |> put_status(200) |> json(user)
+
+      nil ->
+        conn |> put_status(404) |> text('')
     end
   end
 
   def get_me(conn, _) do
-    with user when not is_nil(user) <- Guardian.Plug.current_resource(conn) do
-      conn |> json(user)
-    else
+    case Guardian.Plug.current_resource(conn) do
+      user when not is_nil(user) -> conn |> json(user)
       _ -> conn |> put_status(403) |> text('')
     end
-  end
-
-  def test(conn, %{"name" => name, "invite_user" => invite_user_id}) do
-
-    with user when not is_nil(user) <- Guardian.Plug.current_resource(conn),
-        {:ok, conversation} <- Tandyr.Messaging.new_conversation(user.id, name, [invite_user_id]) do
-          conn |> json(conversation)
-        else
-          nil -> conn |> put_status(403) |> text('')
-          {:error, _} -> conn |> put_status(400) |> json(%{error: "Something went wrong"})
-        end
   end
 end
