@@ -1,4 +1,7 @@
 defmodule TandyrWeb.RoomChannel do
+  @moduledoc """
+  Channel handles all communications in chat room
+  """
   use Phoenix.Channel
 
   require Logger

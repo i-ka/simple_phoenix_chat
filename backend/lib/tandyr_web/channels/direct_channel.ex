@@ -1,4 +1,7 @@
 defmodule TandyrWeb.DirectChannel do
+  @moduledoc """
+  Module to handle direct user communication
+  """
   use TandyrWeb, :channel
 
   require Logger
